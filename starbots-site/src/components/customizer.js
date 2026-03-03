@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { captureSnapshot } from '../utils/snapshot.js'
 
 export const createCustomizerPreview = (canvas) => {
   const scene = new THREE.Scene()
@@ -181,7 +182,7 @@ export const createCustomizerPreview = (canvas) => {
     }
   }
 
-  const snapshot = () => renderer.domElement.toDataURL('image/png')
+  const snapshot = () => captureSnapshot(renderer, scene, camera)
 
   const dispose = () => {
     cancelAnimationFrame(frameId)
