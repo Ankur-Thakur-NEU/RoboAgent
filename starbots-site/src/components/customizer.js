@@ -1,5 +1,8 @@
 import * as THREE from 'three'
+import { GUI } from 'dat.gui'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { captureSnapshot } from '../utils/snapshot.js'
+import { ASSET_PATHS } from '../config/assets.js'
 
 export const createCustomizerPreview = (canvas) => {
   const scene = new THREE.Scene()
@@ -62,6 +65,8 @@ export const createCustomizerPreview = (canvas) => {
   bot.add(mug)
 
   scene.add(bot)
+  const modelGroup = new THREE.Group()
+  scene.add(modelGroup)
 
   const floor = new THREE.Mesh(new THREE.CircleGeometry(1.4, 32), shopMaterial)
   floor.rotation.x = -Math.PI / 2
@@ -100,6 +105,73 @@ export const createCustomizerPreview = (canvas) => {
     arm,
     counter,
   }
+  let currentModel = null
+  let activeModelUrl = ASSET_PATHS.customizerModel
+  const mapPartsFromModel = (root) => {
+    const lookup = {
+      head: root.getObjectByName('head'),
+      body: root.getObjectByName('body'),
+      arm: root.getObjectByName('arm'),
+      counter: root.getObjectByName('counter'),
+    }
+
+    Object.entries(lookup).forEach(([key, object]) => {
+      if (object) {
+        parts[key] = object
+      }
+    })
+  }
+
+  const loadCustomizerModel = (url) => {
+    if (!url) return
+    const loader = new GLTFLoader()
+    loader.load(
+      url,
+      (gltf) => {
+        if (currentModel) {
+          modelGroup.remove(currentModel)
+        }
+        currentModel = gltf.scene
+        modelGroup.add(currentModel)
+        mapPartsFromModel(currentModel)
+        bot.visible = false
+      },
+      undefined,
+      () => {
+        console.error('Customizer model load failed - check ASSET_PATHS.customizerModel')
+        bot.visible = true
+      }
+    )
+  }
+
+  // DESIGNER NOTE: Replace customizer model path in config/assets.js.
+  loadCustomizerModel(activeModelUrl)
+
+  const fileInput = document.createElement('input')
+  fileInput.type = 'file'
+  fileInput.accept = '.glb,.gltf'
+  fileInput.style.display = 'none'
+  document.body.appendChild(fileInput)
+
+  const gui = new GUI({ width: 280 })
+  const controls = {
+    modelUrl: activeModelUrl,
+    loadModel: () => loadCustomizerModel(controls.modelUrl),
+    chooseFile: () => fileInput.click(),
+  }
+  gui.add(controls, 'modelUrl').name('Model URL')
+  gui.add(controls, 'loadModel').name('Reload Model')
+  gui.add(controls, 'chooseFile').name('Load .glb/.gltf')
+
+  fileInput.addEventListener('change', (event) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+    const url = URL.createObjectURL(file)
+    activeModelUrl = url
+    controls.modelUrl = url
+    gui.updateDisplay()
+    loadCustomizerModel(url)
+  })
 
   let selectedMaterial = accentMaterial
 
@@ -138,7 +210,7 @@ export const createCustomizerPreview = (canvas) => {
     pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1
     pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1
     raycaster.setFromCamera(pointer, camera)
-    const hits = raycaster.intersectObjects([head, torso, arm, counter])
+    const hits = raycaster.intersectObjects([parts.head, parts.body, parts.arm, parts.counter].filter(Boolean))
     if (hits.length > 0) {
       setSelectedPart(hits[0].object.name)
     }

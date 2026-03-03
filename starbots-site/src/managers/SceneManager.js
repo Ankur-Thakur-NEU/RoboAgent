@@ -7,6 +7,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { cameraTargets, sectionVisuals } from '../config/sceneConfig.js'
 import { runtimeConfig } from '../config/runtimeConfig.js'
 import { captureSnapshot } from '../utils/snapshot.js'
+import { ASSET_PATHS } from '../config/assets.js'
 
 export class SceneManager {
   /**
@@ -117,7 +118,9 @@ export class SceneManager {
         import('../scenes/coffeeTrail.js'),
       ])
 
-    this.coffeeFlow = createCoffeeFlow(this.scene)
+    this.coffeeFlow = createCoffeeFlow(this.scene, {
+      textureUrl: ASSET_PATHS.coffeeBeanTexture,
+    })
     this.linesToBeans = createLinesToBeans(this.scene)
     this.sectionAccents = createSectionAccents(this.scene)
     this.coffeeTrail = createCoffeeTrail(this.scene)
@@ -224,8 +227,11 @@ export class SceneManager {
 
   loadRobot() {
     const loader = new GLTFLoader()
+    if (!ASSET_PATHS.baristaModel) return
+
+    // DESIGNER NOTE: Replace barista model path in config/assets.js.
     loader.load(
-      'https://threejs.org/examples/models/gltf/RobotExpressive.glb',
+      ASSET_PATHS.baristaModel,
       (gltf) => {
         const robot = gltf.scene
         robot.scale.set(0.6, 0.6, 0.6)
@@ -244,6 +250,7 @@ export class SceneManager {
       },
       undefined,
       () => {
+        console.error('Barista model load failed - check ASSET_PATHS.baristaModel')
         this.humanoid.visible = true
       }
     )

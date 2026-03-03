@@ -8,6 +8,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -17,6 +19,9 @@ jobs:
           cache-dependency-path: starbots-site/package-lock.json
       - name: Install
         run: npm ci
+        working-directory: starbots-site
+      - name: Audit
+        run: npm audit --audit-level=high
         working-directory: starbots-site
       - name: Lint
         run: npm run lint

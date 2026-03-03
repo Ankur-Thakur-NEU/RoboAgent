@@ -1,6 +1,5 @@
 import * as THREE from 'three'
-import vertexShader from '../shaders/linesToBeans.vert?raw'
-import fragmentShader from '../shaders/linesToBeans.frag?raw'
+import { ASSET_SHADERS } from '../config/assets.js'
 
 const createBeanTarget = (radius, thickness) => {
   const angle = Math.random() * Math.PI * 2
@@ -39,8 +38,8 @@ export const createLinesToBeans = (scene) => {
   geometry.setAttribute('targetPosition', new THREE.BufferAttribute(targets, 3))
 
   const material = new THREE.ShaderMaterial({
-    vertexShader,
-    fragmentShader,
+    vertexShader: ASSET_SHADERS.linesToBeansVertex,
+    fragmentShader: ASSET_SHADERS.linesToBeansFragment,
     uniforms: {
       uTime: { value: 0 },
       uProgress: { value: 0 },

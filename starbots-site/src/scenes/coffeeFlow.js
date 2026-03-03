@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { createNoise3D } from 'simplex-noise'
 
-export const createCoffeeFlow = (scene) => {
+export const createCoffeeFlow = (scene, { textureUrl } = {}) => {
   const noise3D = createNoise3D()
   const count = window.matchMedia('(max-width: 768px)').matches ? 700 : 1800
   const positions = new Float32Array(count * 3)
@@ -34,6 +34,20 @@ export const createCoffeeFlow = (scene) => {
     metalness: 0.1,
     emissive: new THREE.Color(0x4b2a10),
   })
+  if (textureUrl) {
+    const loader = new THREE.TextureLoader()
+    loader.load(
+      textureUrl,
+      (texture) => {
+        material.map = texture
+        material.needsUpdate = true
+      },
+      undefined,
+      () => {
+        console.error('Coffee texture load failed - check ASSET_PATHS.coffeeBeanTexture')
+      }
+    )
+  }
   const points = new THREE.InstancedMesh(geometry, material, count)
   points.instanceMatrix.setUsage(THREE.DynamicDrawUsage)
   points.position.set(0, 0.2, -0.4)

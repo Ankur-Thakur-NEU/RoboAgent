@@ -4,15 +4,20 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: {
-          'three-core': ['three'],
-          'three-examples': [
-            'three/examples/jsm/postprocessing/EffectComposer.js',
-            'three/examples/jsm/postprocessing/RenderPass.js',
-            'three/examples/jsm/postprocessing/UnrealBloomPass.js',
-            'three/examples/jsm/loaders/GLTFLoader.js',
-          ],
-          gsap: ['gsap'],
+        manualChunks: (id) => {
+          if (id.includes('node_modules/three/examples/jsm/postprocessing')) {
+            return 'three-post'
+          }
+          if (id.includes('node_modules/three/examples/jsm/loaders')) {
+            return 'three-loaders'
+          }
+          if (id.includes('node_modules/three')) {
+            return 'three-core'
+          }
+          if (id.includes('node_modules/gsap')) {
+            return 'gsap'
+          }
+          return undefined
         },
       },
     },

@@ -2,6 +2,7 @@ import gsap from 'gsap'
 import { createCustomizerPreview } from '../components/customizer.js'
 import { initForms } from '../utils/forms.js'
 import { runtimeConfig } from '../config/runtimeConfig.js'
+import { ASSET_PATHS } from '../config/assets.js'
 
 export class UIManager {
   /**
@@ -37,9 +38,7 @@ export class UIManager {
 
     this.customizer = this.customizerCanvas ? createCustomizerPreview(this.customizerCanvas) : null
 
-    this.sfx = new Audio(
-      'https://cdn.pixabay.com/download/audio/2022/03/15/audio_b61a4f3c09.mp3?filename=coffee-pour-ambient-113367.mp3'
-    )
+    this.sfx = new Audio(ASSET_PATHS.sfxAudio)
     this.sfx.volume = 0.15
     this.sfx.preload = 'auto'
     this.sfxMuted = false
