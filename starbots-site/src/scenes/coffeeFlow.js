@@ -3,9 +3,10 @@ import { createNoise3D } from 'simplex-noise'
 
 export const createCoffeeFlow = (scene) => {
   const noise3D = createNoise3D()
-  const count = 1800
+  const count = window.matchMedia('(max-width: 768px)').matches ? 700 : 1800
   const positions = new Float32Array(count * 3)
   const base = new Float32Array(count * 3)
+  const dummy = new THREE.Object3D()
 
   for (let i = 0; i < count; i += 1) {
     const i3 = i * 3
@@ -26,23 +27,19 @@ export const createCoffeeFlow = (scene) => {
     base[i3 + 2] = z
   }
 
-  const geometry = new THREE.BufferGeometry()
-  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3))
-
-  const material = new THREE.PointsMaterial({
+  const geometry = new THREE.SphereGeometry(0.03, 8, 8)
+  const material = new THREE.MeshStandardMaterial({
     color: 0xffc38f,
-    size: 0.03,
-    transparent: true,
-    opacity: 0.85,
-    depthWrite: false,
+    roughness: 0.3,
+    metalness: 0.1,
+    emissive: new THREE.Color(0x4b2a10),
   })
-
-  const points = new THREE.Points(geometry, material)
+  const points = new THREE.InstancedMesh(geometry, material, count)
+  points.instanceMatrix.setUsage(THREE.DynamicDrawUsage)
   points.position.set(0, 0.2, -0.4)
   scene.add(points)
 
   const update = (elapsed, scroll) => {
-    const positionAttr = geometry.getAttribute('position')
     for (let i = 0; i < count; i += 1) {
       const i3 = i * 3
       const bx = base[i3]
@@ -55,12 +52,15 @@ export const createCoffeeFlow = (scene) => {
         bz * 0.6 + elapsed * 0.15
       )
 
-      positionAttr.array[i3] = bx + curl * 0.5
-      positionAttr.array[i3 + 1] = by + scroll * 2.2 + Math.sin(elapsed + bx) * 0.05
-      positionAttr.array[i3 + 2] = bz + Math.cos(elapsed + by) * 0.05
+      dummy.position.set(
+        bx + curl * 0.5,
+        by + scroll * 2.2 + Math.sin(elapsed + bx) * 0.05,
+        bz + Math.cos(elapsed + by) * 0.05
+      )
+      dummy.updateMatrix()
+      points.setMatrixAt(i, dummy.matrix)
     }
-
-    positionAttr.needsUpdate = true
+    points.instanceMatrix.needsUpdate = true
   }
 
   return { points, update }

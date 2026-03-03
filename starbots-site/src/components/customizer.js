@@ -72,6 +72,27 @@ export const createCustomizerPreview = (canvas) => {
   counter.name = 'counter'
   scene.add(counter)
 
+  const steamCount = 80
+  const steamPositions = new Float32Array(steamCount * 3)
+  for (let i = 0; i < steamCount; i += 1) {
+    const i3 = i * 3
+    steamPositions[i3] = (Math.random() - 0.5) * 0.2
+    steamPositions[i3 + 1] = Math.random() * 0.5 + 0.3
+    steamPositions[i3 + 2] = (Math.random() - 0.5) * 0.2
+  }
+  const steamGeometry = new THREE.BufferGeometry()
+  steamGeometry.setAttribute('position', new THREE.BufferAttribute(steamPositions, 3))
+  const steamMaterial = new THREE.PointsMaterial({
+    color: 0x9ef1ff,
+    size: 0.04,
+    transparent: true,
+    opacity: 0.6,
+    depthWrite: false,
+  })
+  const steam = new THREE.Points(steamGeometry, steamMaterial)
+  steam.position.set(0.5, 0.4, 0.2)
+  scene.add(steam)
+
   const parts = {
     head,
     body: torso,
@@ -79,7 +100,6 @@ export const createCustomizerPreview = (canvas) => {
     counter,
   }
 
-  let selectedPart = 'head'
   let selectedMaterial = accentMaterial
 
   const presets = {
@@ -128,6 +148,15 @@ export const createCustomizerPreview = (canvas) => {
   const animate = () => {
     bot.rotation.y += 0.01
     mug.rotation.z = Math.sin(Date.now() * 0.003) * 0.2
+    const positions = steam.geometry.getAttribute('position')
+    for (let i = 0; i < steamCount; i += 1) {
+      const i3 = i * 3
+      positions.array[i3 + 1] += 0.005
+      if (positions.array[i3 + 1] > 0.9) {
+        positions.array[i3 + 1] = 0.3
+      }
+    }
+    positions.needsUpdate = true
     renderer.render(scene, camera)
     frameId = requestAnimationFrame(animate)
   }
@@ -143,7 +172,6 @@ export const createCustomizerPreview = (canvas) => {
 
   const setSelectedPart = (partName) => {
     if (!parts[partName]) return
-    selectedPart = partName
     if (partName === 'head') {
       selectedMaterial = accentMaterial
     } else if (partName === 'counter') {
@@ -152,6 +180,8 @@ export const createCustomizerPreview = (canvas) => {
       selectedMaterial = bodyMaterial
     }
   }
+
+  const snapshot = () => renderer.domElement.toDataURL('image/png')
 
   const dispose = () => {
     cancelAnimationFrame(frameId)
@@ -164,6 +194,7 @@ export const createCustomizerPreview = (canvas) => {
     setColor,
     setSelectedPart,
     setMaterialPreset: applyPreset,
+    snapshot,
     dispose,
   }
 }

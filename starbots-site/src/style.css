@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600&family=Syne:wght@500;600;700&display=swap');
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
   color: #e6eef7;
   background-color: #090b10;
@@ -44,6 +48,10 @@ body {
   height: 100%;
   display: block;
   z-index: 0;
+}
+
+.particle-system {
+  filter: drop-shadow(0 0 18px rgba(255, 195, 143, 0.2));
 }
 
 #ui {
@@ -205,6 +213,11 @@ main {
   position: relative;
 }
 
+.scroll-morph {
+  transform-origin: center;
+  transition: transform 0.6s ease, opacity 0.6s ease;
+}
+
 .section::after {
   content: '';
   position: absolute;
@@ -308,6 +321,7 @@ main {
 .signup-form textarea:focus {
   outline: none;
   border-color: rgba(158, 241, 255, 0.5);
+  box-shadow: 0 0 0 2px rgba(158, 241, 255, 0.25);
 }
 
 .signup-form small {
@@ -318,6 +332,39 @@ main {
 .signup-status {
   color: var(--accent-warm);
   font-size: 0.85rem;
+}
+
+.signup-socials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.social-btn {
+  background: rgba(12, 16, 24, 0.6);
+  border: 1px solid rgba(158, 241, 255, 0.3);
+  color: #e6eef7;
+  padding: 0.5rem 0.9rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  letter-spacing: 0.08rem;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.signup-burst {
+  position: relative;
+  height: 1px;
+  width: 1px;
+}
+
+.signup-burst span {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--accent-warm);
+  opacity: 0;
 }
 
 .signup-preview {
@@ -390,6 +437,18 @@ main {
   color: #e6eef7;
 }
 
+.customizer-snapshot {
+  background: transparent;
+  border: 1px solid rgba(255, 195, 143, 0.4);
+  color: var(--accent-warm);
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  letter-spacing: 0.08rem;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
 .preview-orb {
   width: 140px;
   height: 140px;
@@ -400,6 +459,54 @@ main {
 
 .preview-note {
   font-size: 0.8rem;
+}
+
+.contact-form {
+  margin-top: 1.6rem;
+  display: grid;
+  gap: 1rem;
+  max-width: 520px;
+}
+
+.contact-form label {
+  display: grid;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.contact-form input,
+.contact-form textarea,
+.contact-form select {
+  background: rgba(10, 14, 20, 0.6);
+  border: 1px solid rgba(230, 238, 247, 0.2);
+  border-radius: 12px;
+  padding: 0.7rem 0.8rem;
+  color: #e6eef7;
+  font-family: inherit;
+  font-size: 0.9rem;
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus,
+.contact-form select:focus,
+.customizer-btn:focus,
+.sound-toggle:focus,
+.menu-toggle:focus,
+.snapshot-btn:focus,
+.button:focus,
+.cta-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(255, 195, 143, 0.35);
+}
+
+.contact-form select {
+  cursor: pointer;
+}
+
+.contact-status {
+  color: var(--accent-warm);
+  font-size: 0.85rem;
 }
 
 .eyebrow {
@@ -445,6 +552,10 @@ main {
   will-change: transform, opacity;
 }
 
+.gsap-reveal {
+  opacity: 0;
+}
+
 .hero-cta {
   display: flex;
   gap: 1rem;
@@ -486,6 +597,16 @@ main {
   z-index: 12;
   opacity: 0;
   pointer-events: none;
+}
+
+@media (max-width: 768px) {
+  #cursor {
+    display: none;
+  }
+
+  #scroll-indicator {
+    display: none;
+  }
 }
 
 .button {

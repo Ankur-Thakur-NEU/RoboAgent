@@ -5,9 +5,11 @@ import { createCoffeeFlow } from './scenes/coffeeFlow.js'
 import { createLinesToBeans } from './scenes/linesToBeans.js'
 import { createSectionAccents } from './scenes/sectionAccents.js'
 import { createCustomizerPreview } from './components/customizer.js'
+import { createCoffeeTrail } from './scenes/coffeeTrail.js'
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js'
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 
 const canvas = document.querySelector('#webgl')
 
@@ -54,6 +56,7 @@ sunMesh.position.set(-1.8, 1.6, -2)
 scene.add(sunMesh)
 
 const humanoid = new THREE.Group()
+let robotMixer = null
 
 const bodyMaterial = new THREE.MeshStandardMaterial({
   color: 0x1d2330,
@@ -128,6 +131,29 @@ humanoid.add(base)
 
 scene.add(humanoid)
 
+const loader = new GLTFLoader()
+loader.load(
+  'https://threejs.org/examples/models/gltf/RobotExpressive.glb',
+  (gltf) => {
+    const robot = gltf.scene
+    robot.scale.set(0.6, 0.6, 0.6)
+    robot.position.set(0, -0.4, 0)
+    humanoid.visible = false
+    scene.add(robot)
+    if (gltf.animations?.length) {
+      robotMixer = new THREE.AnimationMixer(robot)
+      const clip = gltf.animations.find((animation) => animation.name.includes('Wave')) || gltf.animations[0]
+      if (clip) {
+        robotMixer.clipAction(clip).play()
+      }
+    }
+  },
+  undefined,
+  () => {
+    humanoid.visible = true
+  }
+)
+
 const coffeeFlow = createCoffeeFlow(scene)
 const linesToBeans = createLinesToBeans(scene)
 const sectionAccents = createSectionAccents(scene)
@@ -140,13 +166,54 @@ const bloomPass = new UnrealBloomPass(
   0.6,
   0.85
 )
-composer.addPass(bloomPass)
+const isMobile = window.matchMedia('(max-width: 768px)').matches
+if (!isMobile) {
+  composer.addPass(bloomPass)
+}
+let highQuality = !isMobile
+
+const sectionVisuals = {
+  home: { bloom: 0.7, fill: 0.8, ambient: 0.6 },
+  about: { bloom: 0.55, fill: 0.6, ambient: 0.55 },
+  business: { bloom: 0.75, fill: 0.9, ambient: 0.6 },
+  revenue: { bloom: 0.9, fill: 1.0, ambient: 0.55 },
+  advantages: { bloom: 0.8, fill: 0.85, ambient: 0.6 },
+  growth: { bloom: 0.7, fill: 0.75, ambient: 0.5 },
+  market: { bloom: 0.65, fill: 0.7, ambient: 0.55 },
+  investment: { bloom: 1.0, fill: 1.1, ambient: 0.5 },
+  team: { bloom: 0.6, fill: 0.65, ambient: 0.55 },
+  contact: { bloom: 0.75, fill: 0.8, ambient: 0.6 },
+  signup: { bloom: 0.7, fill: 0.8, ambient: 0.6 },
+}
+
+const applySectionVisuals = (sectionId) => {
+  const target = sectionVisuals[sectionId]
+  if (!target) return
+  if (bloomPass.enabled) {
+    gsap.to(bloomPass, { strength: target.bloom, duration: 1.0, ease: 'power2.out' })
+  }
+  gsap.to(fillLight, { intensity: target.fill, duration: 1.0, ease: 'power2.out' })
+  gsap.to(ambientLight, { intensity: target.ambient, duration: 1.0, ease: 'power2.out' })
+}
 
 const parallaxLayers = [
   { object: humanoid, depth: 0.35, base: humanoid.position.clone() },
   { object: coffeeFlow.points, depth: 0.2, base: coffeeFlow.points.position.clone() },
   { object: linesToBeans.points, depth: 0.1, base: linesToBeans.points.position.clone() },
 ]
+
+const coffeeTrail = createCoffeeTrail(scene)
+
+const setQuality = (isHigh) => {
+  highQuality = isHigh
+  bloomPass.enabled = isHigh
+  coffeeFlow.points.visible = isHigh
+  linesToBeans.points.visible = isHigh
+  coffeeTrail.points.visible = isHigh
+  if (!isHigh && sectionAccents) {
+    sectionAccents.setActive('')
+  }
+}
 
 const clock = new THREE.Clock()
 
@@ -222,15 +289,31 @@ const animate = () => {
   })
 
   if (coffeeFlow) {
-    coffeeFlow.update(elapsed, scrollProgress)
+    if (highQuality) {
+      coffeeFlow.update(elapsed, scrollProgress)
+    }
   }
 
   if (linesToBeans) {
-    linesToBeans.update(elapsed, aboutMorphProgress)
+    if (highQuality) {
+      linesToBeans.update(elapsed, aboutMorphProgress)
+    }
   }
 
   if (sectionAccents) {
-    sectionAccents.update(elapsed)
+    if (highQuality) {
+      sectionAccents.update(elapsed)
+    }
+  }
+
+  if (coffeeTrail) {
+    if (highQuality) {
+      coffeeTrail.update()
+    }
+  }
+
+  if (robotMixer) {
+    robotMixer.update(clock.getDelta())
   }
 
   composer.render()
@@ -248,6 +331,7 @@ const cursorLabel = document.querySelector('#cursor-label')
 const scrollIndicatorBar = document.querySelector('.scroll-indicator-bar')
 const snapshotButton = document.querySelector('#snapshot-btn')
 const soundToggle = document.querySelector('#sound-toggle')
+const qualityToggle = document.querySelector('#quality-toggle')
 const signupForm = document.querySelector('#signup-form')
 const signupFollowers = document.querySelector('#signup-followers')
 const signupFollowersHelp = document.querySelector('#signup-followers-help')
@@ -258,6 +342,10 @@ const customizerCanvas = document.querySelector('#customizer-canvas')
 const customizer = customizerCanvas ? createCustomizerPreview(customizerCanvas) : null
 const customizerButtons = document.querySelectorAll('.customizer-btn')
 const customizerMaterial = document.querySelector('#customizer-material')
+const customizerSnapshot = document.querySelector('#customizer-snapshot')
+const contactForm = document.querySelector('#contact-form')
+const contactStatus = document.querySelector('#contact-status')
+const signupBurst = document.querySelector('#signup-burst')
 const sfx = new Audio('https://cdn.pixabay.com/download/audio/2022/03/15/audio_b61a4f3c09.mp3?filename=coffee-pour-ambient-113367.mp3')
 sfx.volume = 0.15
 sfx.preload = 'auto'
@@ -286,6 +374,7 @@ const setActiveSection = (hash) => {
     section.classList.toggle('is-active', section.id === targetId)
   })
   transitionCamera(targetId)
+  applySectionVisuals(targetId)
   if (sectionAccents) {
     sectionAccents.setActive(targetId)
   }
@@ -325,6 +414,17 @@ const updateScrollProgress = () => {
   }
 }
 
+let scrollTicking = false
+const onScroll = () => {
+  if (!scrollTicking) {
+    window.requestAnimationFrame(() => {
+      updateScrollProgress()
+      scrollTicking = false
+    })
+    scrollTicking = true
+  }
+}
+
 const updateSectionMetrics = () => {
   sectionMetrics = Array.from(sections).map((section) => ({
     id: section.id,
@@ -349,6 +449,7 @@ const observer = new IntersectionObserver(
         sections.forEach((section) => section.classList.remove('is-active'))
         entry.target.classList.add('is-active')
         transitionCamera(entry.target.id)
+        applySectionVisuals(entry.target.id)
         if (sectionAccents) {
           sectionAccents.setActive(entry.target.id)
         }
@@ -360,7 +461,7 @@ const observer = new IntersectionObserver(
 )
 
 sections.forEach((section) => observer.observe(section))
-window.addEventListener('scroll', updateScrollProgress, { passive: true })
+window.addEventListener('scroll', onScroll, { passive: true })
 updateScrollProgress()
 updateSectionMetrics()
 window.addEventListener('resize', updateSectionMetrics)
@@ -384,13 +485,17 @@ const revealSection = (section) => {
   revealItems.forEach((item) => {
     if (item.dataset.revealed === 'true') return
     item.dataset.revealed = 'true'
-    gsap.from(item, {
-      y: 24,
-      opacity: 0,
-      duration: 0.7,
-      ease: 'power3.out',
-      delay: 0.05,
-    })
+    gsap.fromTo(
+      item,
+      { y: 24, opacity: 0 },
+      {
+        y: 0,
+        opacity: 1,
+        duration: 0.7,
+        ease: 'power3.out',
+        delay: 0.05,
+      }
+    )
   })
 }
 
@@ -459,10 +564,18 @@ const playSfx = () => {
   try {
     sfx.currentTime = 0
     sfx.play()
-  } catch (error) {
+  } catch {
     // Autoplay restrictions can block; ignore silently.
   }
 }
+
+window.addEventListener('mousemove', (event) => {
+  const normalizedX = (event.clientX / window.innerWidth - 0.5) * 2
+  const normalizedY = -(event.clientY / window.innerHeight - 0.5) * 2
+  if (highQuality) {
+    coffeeTrail.addPoint(normalizedX * 2.4, normalizedY * 1.4)
+  }
+})
 
 document.querySelectorAll('a, button').forEach((el) => {
   el.addEventListener('mouseenter', playSfx)
@@ -475,6 +588,38 @@ if (soundToggle) {
     soundToggle.setAttribute('aria-pressed', String(sfxMuted))
     soundToggle.textContent = sfxMuted ? 'SFX: Off' : 'SFX: On'
   })
+}
+
+if (qualityToggle) {
+  qualityToggle.addEventListener('click', () => {
+    const nextQuality = !highQuality
+    setQuality(nextQuality)
+    qualityToggle.setAttribute('aria-pressed', String(!nextQuality))
+    qualityToggle.textContent = nextQuality ? 'Quality: High' : 'Quality: Low'
+  })
+  setQuality(highQuality)
+}
+
+const triggerSignupBurst = () => {
+  if (!signupBurst) return
+  signupBurst.innerHTML = ''
+  const count = 12
+  for (let i = 0; i < count; i += 1) {
+    const dot = document.createElement('span')
+    signupBurst.appendChild(dot)
+    const angle = (Math.PI * 2 * i) / count
+    gsap.fromTo(
+      dot,
+      { opacity: 1, x: 0, y: 0 },
+      {
+        x: Math.cos(angle) * 40,
+        y: Math.sin(angle) * 40,
+        opacity: 0,
+        duration: 0.8,
+        ease: 'power2.out',
+      }
+    )
+  }
 }
 
 if (signupAccent && signupPreview) {
@@ -503,6 +648,16 @@ if (customizerMaterial && customizer) {
   })
 }
 
+if (customizerSnapshot && customizer) {
+  customizerSnapshot.addEventListener('click', () => {
+    const dataUrl = customizer.snapshot()
+    const link = document.createElement('a')
+    link.href = dataUrl
+    link.download = `starbots-customizer-${Date.now()}.png`
+    link.click()
+  })
+}
+
 if (signupFollowers && signupFollowersHelp) {
   signupFollowers.addEventListener('input', (event) => {
     const count = Number(event.target.value || 0)
@@ -521,10 +676,22 @@ if (signupForm && signupStatus) {
     const data = Object.fromEntries(formData.entries())
     console.log('Creator signup', data)
     signupStatus.textContent = 'Application received. We will reach out soon.'
+    triggerSignupBurst()
     signupForm.reset()
     if (signupPreview) {
       signupPreview.style.setProperty('--preview-accent', '#9ef1ff')
     }
+  })
+}
+
+if (contactForm && contactStatus) {
+  contactForm.addEventListener('submit', (event) => {
+    event.preventDefault()
+    const formData = new FormData(contactForm)
+    const data = Object.fromEntries(formData.entries())
+    console.log('Contact inquiry', data)
+    contactStatus.textContent = 'Thanks! We will reply within 2 business days.'
+    contactForm.reset()
   })
 }
 
@@ -552,3 +719,7 @@ if (snapshotButton) {
     showSnapshotToast('Snapshot saved')
   })
 }
+
+window.addEventListener('beforeunload', () => {
+  renderer.dispose()
+})

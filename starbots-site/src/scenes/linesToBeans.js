@@ -13,7 +13,7 @@ const createBeanTarget = (radius, thickness) => {
 }
 
 export const createLinesToBeans = (scene) => {
-  const count = 1400
+  const count = window.matchMedia('(max-width: 768px)').matches ? 600 : 1400
   const positions = new Float32Array(count * 3)
   const targets = new Float32Array(count * 3)
 

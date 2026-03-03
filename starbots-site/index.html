@@ -4,11 +4,12 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/src/style.css" />
     <title>STÅRBOTS</title>
   </head>
-  <body>
+  <body class="bg-coffee-gradient text-white">
     <div id="app">
-      <canvas id="webgl" aria-label="3D scene"></canvas>
+      <canvas id="webgl" class="webgl-canvas particle-system fixed inset-0 w-full h-full -z-10" aria-label="3D scene" role="img"></canvas>
       <div id="ui">
         <header class="site-header">
           <a class="brand" href="#home" aria-label="STÅRBOTS home">STÅRBOTS</a>
@@ -19,8 +20,9 @@
             <a href="#contact" data-scroll>Contact</a>
           </nav>
           <div class="header-actions">
-            <button id="sound-toggle" class="sound-toggle" type="button" aria-pressed="false">SFX: On</button>
-            <button id="menu-toggle" class="menu-toggle" aria-expanded="false" aria-controls="menu-panel">
+            <button id="sound-toggle" class="sound-toggle" type="button" aria-pressed="false" aria-label="Toggle sound effects">SFX: On</button>
+            <button id="quality-toggle" class="sound-toggle" type="button" aria-pressed="false" aria-label="Toggle visual quality">Quality: High</button>
+            <button id="menu-toggle" class="menu-toggle" aria-expanded="false" aria-controls="menu-panel" aria-label="Toggle menu">
               <span class="menu-toggle-text">Menu</span>
               <span class="menu-toggle-dots" aria-hidden="true"></span>
             </button>
@@ -61,22 +63,22 @@
                 <a class="button" href="#signup" data-scroll>Creator Sign-up</a>
                 <a class="button ghost" href="#contact" data-scroll>Investor Inquiry</a>
               </div>
-              <button id="snapshot-btn" class="snapshot-btn" type="button">Save 3D Snapshot</button>
+              <button id="snapshot-btn" class="snapshot-btn" type="button" aria-label="Save 3D snapshot">Save 3D Snapshot</button>
             </div>
           </section>
 
-          <section id="about" class="section">
+          <section id="about" class="section scroll-morph">
             <div class="section-inner">
-              <h2 class="section-title" data-reveal>Executive Summary</h2>
-              <p class="section-copy" data-reveal>STÅRBOTS blends influencer reach, humanoid baristas, health-driven beverages, and real estate to build a next-generation coffee franchise.</p>
+              <h2 class="section-title gsap-reveal" data-reveal>Executive Summary</h2>
+              <p class="section-copy gsap-reveal" data-reveal>STÅRBOTS blends influencer reach, humanoid baristas, health-driven beverages, and real estate to build a next-generation coffee franchise.</p>
             </div>
           </section>
 
           <section id="business" class="section">
             <div class="section-inner">
-              <h2 class="section-title" data-reveal>Business Model</h2>
-              <p class="section-copy" data-reveal>Franchise + influencer licensing with modular storefronts and customizable robotic baristas.</p>
-              <div class="cta-banner" data-reveal>
+              <h2 class="section-title gsap-reveal" data-reveal>Business Model</h2>
+              <p class="section-copy gsap-reveal" data-reveal>Franchise + influencer licensing with modular storefronts and customizable robotic baristas.</p>
+              <div class="cta-banner gsap-reveal" data-reveal>
                 <p>Invest Now: EB-5 Pathways for global expansion.</p>
                 <a class="cta-button" href="#contact" data-scroll>Join the investor deck</a>
               </div>
@@ -85,37 +87,37 @@
 
           <section id="revenue" class="section">
             <div class="section-inner">
-              <h2 class="section-title" data-reveal>Revenue Streams</h2>
-              <p class="section-copy" data-reveal>Franchise fees, beverage sales, licensing, IP partnerships, and real estate appreciation.</p>
+              <h2 class="section-title gsap-reveal" data-reveal>Revenue Streams</h2>
+              <p class="section-copy gsap-reveal" data-reveal>Franchise fees, beverage sales, licensing, IP partnerships, and real estate appreciation.</p>
             </div>
           </section>
 
           <section id="advantages" class="section">
             <div class="section-inner">
-              <h2 class="section-title" data-reveal>Competitive Advantages</h2>
-              <p class="section-copy" data-reveal>Humanoid automation, influencer distribution, and global franchising playbooks.</p>
+              <h2 class="section-title gsap-reveal" data-reveal>Competitive Advantages</h2>
+              <p class="section-copy gsap-reveal" data-reveal>Humanoid automation, influencer distribution, and global franchising playbooks.</p>
             </div>
           </section>
 
           <section id="growth" class="section">
             <div class="section-inner">
-              <h2 class="section-title" data-reveal>Growth Strategy</h2>
-              <p class="section-copy" data-reveal>Phase rollout from flagship pilots to global creator-owned hubs.</p>
+              <h2 class="section-title gsap-reveal" data-reveal>Growth Strategy</h2>
+              <p class="section-copy gsap-reveal" data-reveal>Phase rollout from flagship pilots to global creator-owned hubs.</p>
             </div>
           </section>
 
           <section id="market" class="section">
             <div class="section-inner">
-              <h2 class="section-title" data-reveal>Target Market</h2>
-              <p class="section-copy" data-reveal>Primary: Gen Z and millennial audiences. Secondary: wellness-driven coffee consumers.</p>
+              <h2 class="section-title gsap-reveal" data-reveal>Target Market</h2>
+              <p class="section-copy gsap-reveal" data-reveal>Primary: Gen Z and millennial audiences. Secondary: wellness-driven coffee consumers.</p>
             </div>
           </section>
 
           <section id="investment" class="section">
             <div class="section-inner">
-              <h2 class="section-title" data-reveal>Investment Opportunity</h2>
-              <p class="section-copy" data-reveal>Exposure to robotics, influencer marketing, and franchise real estate convergence.</p>
-              <div class="cta-banner" data-reveal>
+              <h2 class="section-title gsap-reveal" data-reveal>Investment Opportunity</h2>
+              <p class="section-copy gsap-reveal" data-reveal>Exposure to robotics, influencer marketing, and franchise real estate convergence.</p>
+              <div class="cta-banner gsap-reveal" data-reveal>
                 <p>Investor invite: position at the intersection of robotics, wellness, and real estate.</p>
                 <a class="cta-button" href="#contact" data-scroll>Request investment access</a>
               </div>
@@ -124,9 +126,9 @@
 
           <section id="signup" class="section">
             <div class="section-inner">
-              <h2 class="section-title" data-reveal>Creator Sign-up</h2>
-              <p class="section-copy" data-reveal>Connect as Creator: Customize your bot barista and shop. 1M+ followers preferred.</p>
-              <div class="signup-grid" data-reveal>
+              <h2 class="section-title gsap-reveal" data-reveal>Creator Sign-up</h2>
+              <p class="section-copy gsap-reveal" data-reveal>Connect as Creator: Customize your bot barista and shop. 1M+ followers preferred.</p>
+              <div class="signup-grid gsap-reveal" data-reveal>
                 <form id="signup-form" class="signup-form">
                   <label>
                     Full name
@@ -153,6 +155,11 @@
                     <input id="signup-followers" type="number" name="followers" min="0" placeholder="1000000" />
                     <small id="signup-followers-help"></small>
                   </label>
+                  <div class="signup-socials">
+                    <button type="button" class="social-btn">Connect Instagram</button>
+                    <button type="button" class="social-btn">Connect TikTok</button>
+                    <button type="button" class="social-btn">Connect X</button>
+                  </div>
                   <label>
                     Accent / part color
                     <input id="signup-accent" type="color" name="accent" value="#9ef1ff" />
@@ -170,16 +177,17 @@
                     <input type="file" name="sketch" />
                   </label>
                   <button class="button" type="submit">Submit application</button>
+                  <div id="signup-burst" class="signup-burst" aria-hidden="true"></div>
                   <div id="signup-status" class="signup-status"></div>
                 </form>
                 <div id="signup-preview" class="signup-preview">
-                  <canvas id="customizer-canvas" class="customizer-canvas" aria-label="Custom barista preview"></canvas>
+                  <canvas id="customizer-canvas" class="customizer-canvas" aria-label="Custom barista preview" role="img"></canvas>
                   <div class="customizer-controls">
                     <div class="customizer-buttons">
-                      <button type="button" class="customizer-btn" data-part="head">Head</button>
-                      <button type="button" class="customizer-btn" data-part="body">Body</button>
-                      <button type="button" class="customizer-btn" data-part="arm">Arm</button>
-                      <button type="button" class="customizer-btn" data-part="counter">Counter</button>
+                      <button type="button" class="customizer-btn" data-part="head" aria-label="Select head">Head</button>
+                      <button type="button" class="customizer-btn" data-part="body" aria-label="Select body">Body</button>
+                      <button type="button" class="customizer-btn" data-part="arm" aria-label="Select arm">Arm</button>
+                      <button type="button" class="customizer-btn" data-part="counter" aria-label="Select counter">Counter</button>
                     </div>
                     <label>
                       Material
@@ -190,6 +198,7 @@
                       </select>
                     </label>
                   </div>
+                  <button id="customizer-snapshot" class="customizer-snapshot" type="button">Snapshot</button>
                   <div class="preview-orb"></div>
                   <p>Live preview: Bot accent glow</p>
                   <p class="preview-note">Full 3D customizer launches next.</p>
@@ -200,20 +209,44 @@
 
           <section id="team" class="section">
             <div class="section-inner">
-              <h2 class="section-title" data-reveal>Team & Leadership</h2>
-              <p class="section-copy" data-reveal>A cross-disciplinary crew spanning robotics, consumer, and experiential design.</p>
+              <h2 class="section-title gsap-reveal" data-reveal>Team & Leadership</h2>
+              <p class="section-copy gsap-reveal" data-reveal>A cross-disciplinary crew spanning robotics, consumer, and experiential design.</p>
             </div>
           </section>
 
           <section id="contact" class="section">
             <div class="section-inner">
-              <h2 class="section-title" data-reveal>Contact</h2>
-              <p class="section-copy" data-reveal>Investor and creator inquiries welcomed.</p>
-              <div class="cta-banner" data-reveal>
-                <p>Creators with 1M+ followers: co-design your bot barista and flagship store.</p>
+              <h2 class="section-title gsap-reveal" data-reveal>Contact</h2>
+              <p class="section-copy gsap-reveal" data-reveal>Investor and creator inquiries welcomed.</p>
+              <div class="cta-banner gsap-reveal" data-reveal>
+                <p>Creators with 1M+ followers: co-design your bot barista and flagship store. EB-5 pathways available.</p>
                 <a class="cta-button" href="#signup" data-scroll>Creator sign-up</a>
               </div>
-              <a class="button" href="mailto:hello@starbots.example.com">Email us</a>
+              <form id="contact-form" class="contact-form" data-reveal aria-label="Contact form">
+                <label>
+                  Name
+                  <input type="text" name="name" required />
+                </label>
+                <label>
+                  Email
+                  <input type="email" name="email" required />
+                </label>
+                <label>
+                  Role
+                  <select name="role">
+                    <option value="investor">Investor</option>
+                    <option value="creator">Creator</option>
+                    <option value="franchise">Franchise Partner</option>
+                  </select>
+                </label>
+                <label>
+                  Message
+                  <textarea name="message" rows="4"></textarea>
+                </label>
+                <button class="button" type="submit">Send inquiry</button>
+                <div id="contact-status" class="contact-status"></div>
+              </form>
+              <a class="button ghost" href="mailto:hello@starbots.example.com">Email us directly</a>
             </div>
           </section>
         </main>
