@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>STÅRBOTS</title>
+  </head>
+  <body>
+    <div id="app">
+      <canvas id="webgl" aria-label="3D scene"></canvas>
+      <div id="ui">
+        <header class="site-header">
+          <a class="brand" href="#home" aria-label="STÅRBOTS home">STÅRBOTS</a>
+          <nav class="primary-nav" aria-label="Primary">
+            <a href="#about" data-scroll>About</a>
+            <a href="#business" data-scroll>Business</a>
+            <a href="#growth" data-scroll>Growth</a>
+            <a href="#contact" data-scroll>Contact</a>
+          </nav>
+          <button id="menu-toggle" class="menu-toggle" aria-expanded="false" aria-controls="menu-panel">
+            <span class="menu-toggle-text">Menu</span>
+            <span class="menu-toggle-dots" aria-hidden="true"></span>
+          </button>
+        </header>
+
+        <div id="menu-panel" class="menu-panel" aria-hidden="true">
+          <div class="menu-panel-inner">
+            <div class="menu-links">
+              <a href="#home" data-scroll>Home</a>
+              <a href="#about" data-scroll>About</a>
+              <a href="#business" data-scroll>Business Model</a>
+              <a href="#revenue" data-scroll>Revenue</a>
+              <a href="#advantages" data-scroll>Advantages</a>
+              <a href="#growth" data-scroll>Growth</a>
+              <a href="#market" data-scroll>Market</a>
+              <a href="#investment" data-scroll>Investment</a>
+              <a href="#team" data-scroll>Team</a>
+              <a href="#contact" data-scroll>Contact</a>
+              <a href="/signup" class="menu-highlight">Creator Sign-up</a>
+            </div>
+            <div class="menu-side">
+              <p class="menu-eyebrow">Invite</p>
+              <p class="menu-copy">Investors & creators shaping the next coffee frontier.</p>
+              <a class="menu-cta" href="#contact" data-scroll>Start a conversation</a>
+            </div>
+          </div>
+        </div>
+
+        <main id="main">
+          <section id="home" class="section is-active">
+            <div class="section-inner">
+              <div class="hero-glow" aria-hidden="true"></div>
+              <p class="eyebrow split-text" data-split>Influencer-Franchise Coffee Empire</p>
+              <h1 class="hero-title split-text" data-split>STÅRBOTS</h1>
+              <p class="hero-subtitle split-text" data-split>The World's First Influencer-Franchise Coffee Empire.</p>
+              <div class="hero-cta">
+                <a class="button" href="/signup">Creator Sign-up</a>
+                <a class="button ghost" href="#contact" data-scroll>Investor Inquiry</a>
+              </div>
+            </div>
+          </section>
+
+          <section id="about" class="section">
+            <div class="section-inner">
+              <h2>Executive Summary</h2>
+              <p>STÅRBOTS blends influencer reach, humanoid baristas, health-driven beverages, and real estate to build a next-generation coffee franchise.</p>
+            </div>
+          </section>
+
+          <section id="business" class="section">
+            <div class="section-inner">
+              <h2>Business Model</h2>
+              <p>Franchise + influencer licensing with modular storefronts and customizable robotic baristas.</p>
+            </div>
+          </section>
+
+          <section id="revenue" class="section">
+            <div class="section-inner">
+              <h2>Revenue Streams</h2>
+              <p>Franchise fees, beverage sales, licensing, IP partnerships, and real estate appreciation.</p>
+            </div>
+          </section>
+
+          <section id="advantages" class="section">
+            <div class="section-inner">
+              <h2>Competitive Advantages</h2>
+              <p>Humanoid automation, influencer distribution, and global franchising playbooks.</p>
+            </div>
+          </section>
+
+          <section id="growth" class="section">
+            <div class="section-inner">
+              <h2>Growth Strategy</h2>
+              <p>Phase rollout from flagship pilots to global creator-owned hubs.</p>
+            </div>
+          </section>
+
+          <section id="market" class="section">
+            <div class="section-inner">
+              <h2>Target Market</h2>
+              <p>Primary: Gen Z and millennial audiences. Secondary: wellness-driven coffee consumers.</p>
+            </div>
+          </section>
+
+          <section id="investment" class="section">
+            <div class="section-inner">
+              <h2>Investment Opportunity</h2>
+              <p>Exposure to robotics, influencer marketing, and franchise real estate convergence.</p>
+            </div>
+          </section>
+
+          <section id="team" class="section">
+            <div class="section-inner">
+              <h2>Team & Leadership</h2>
+              <p>A cross-disciplinary crew spanning robotics, consumer, and experiential design.</p>
+            </div>
+          </section>
+
+          <section id="contact" class="section">
+            <div class="section-inner">
+              <h2>Contact</h2>
+              <p>Investor and creator inquiries welcomed.</p>
+              <a class="button" href="mailto:hello@starbots.example.com">Email us</a>
+            </div>
+          </section>
+        </main>
+
+        <footer class="site-footer">
+          <p>STÅRBOTS © 2026</p>
+        </footer>
+      </div>
+
+      <div id="scroll-indicator" aria-hidden="true">
+        <span class="scroll-indicator-bar"></span>
+      </div>
+
+      <div id="cursor" aria-hidden="true">
+        <span id="cursor-label">Scroll</span>
+      </div>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
